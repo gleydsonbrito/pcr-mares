@@ -200,8 +200,8 @@
             upOrDown.setAttribute('src', tideDirection === "Descendo" ? 'down.png' : 'up.png')
 
             //data em horas de ontem e amanhã
-            const lastHour = new Date(yesterday.DATAHORA).getHours()
-            const nextHour = new Date(today.DATAHORA).getHours()
+            const lastHour = new Date(yesterday.DATAHORA).getMilliseconds() / 3600000
+            const nextHour = new Date(today.DATAHORA).getMilliseconds() / 3600000
             
             //calcula a diferença das datas (como valor absoluto)
             const diffLastNextHour = lastHour - nextHour
@@ -216,7 +216,7 @@
             const mTideLevel = document.querySelector(".m-tide")
             //verificar se realmente precisa do incremento 
             //maré subindo soma, descendo subtrai
-            const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : ((-1) * sumOrNotTideResult)
+            const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : (-sumOrNotTideResult)
             mTideLevel.innerHTML =`${today.MARE}m`
 
             

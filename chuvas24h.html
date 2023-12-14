@@ -86,20 +86,24 @@
     <script>
         const mmRainEndpoint  = "https://esigportal2.recife.pe.gov.br/arcgis/rest/services/SEPLAG/BASES_PLUVIOMETRO_CEMADEN_ESTACOES/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&timeRelation=esriTimeRelationOverlaps&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&sqlFormat=none&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson"
         let mmRain = 0.0
+        let qtWaterStations = 0
 
         fetch(mmRainEndpoint)
         .then( res => res.json())
         .then( data => data.features)
-        .then( feat => feat.filter( e => e.attributes["DBD2ESRI.ESI2.FCPLUVIOMETRO_ESTACAO.CIDADE"] === 'RECIFE') )
+        .then( feat => feat.filter( e => {
+            return e.attributes["DBD2ESRI.ESI2.FCPLUVIOMETRO_ESTACAO.CIDADE"] === 'RECIFE'
+        }) )
         .then( mmList => {
             mmList.forEach( att => {
                 let mmTemp = att.attributes["DBD2ESRI.ESI2.TBCEMADENESTACAO_HIST.ACC24HR"]
                 if(typeof mmTemp === 'number') {
                     mmRain += parseFloat(mmTemp)
+                    qtWaterStations+=1
                 }
             });
             const qtMM = document.querySelector(".mm-rain")
-            const meanMM = mmRain / mmList.length
+            const meanMM = mmRain / qtWaterStations
             qtMM.innerHTML = `${meanMM.toFixed(1)} mm`
             return
         } )
