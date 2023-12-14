@@ -51,35 +51,46 @@
             width: 50px;
             height: 50px;
             animation-name: slideImage;
-            animation-duration: 1.5s;
+            animation-duration: 2s;
             animation-timing-function: ease-out;
         }
 
         @keyframes slideImage {
             0% {
-                top: -200px;
                 width: 2px;
                 height: 2px;
             }
 
             100% {
-                top: 0
+                width: 50px;
+                height: 50px;
             }
         }
 
         .w-container {
             position: relative;
+            margin-top: -70px;
             bottom: -20px;
             width: 100%;
             height: 120px;
         }
 
-        .wave {
+        .wave-up {
             position: relative;     
             opacity: 0.7;
             width: 100%;
             height: 100%;
             margin-bottom: -10px;
+            animation: pulse 3s linear infinite, subindo linear 10s;
+        }
+
+        .wave-down {
+            position: relative;     
+            opacity: 0.7;
+            width: 100%;
+            height: 100%;
+            margin-bottom: -10px;
+            animation: pulse 3s linear infinite, descendo 10s linear 1s forwards;
         }
 
         .level-container {
@@ -92,6 +103,36 @@
             margin-left: 20px;
             width: 30px;
             height: 30px;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes subindo {
+            0% {
+                top: 100px;
+            }
+            100% {
+                top: 0;
+            }
+        }
+
+        @keyframes descendo {
+            0% {
+                top: 0px;
+            }
+            100% {
+                top: 40px;
+            }
         }
 
     </style>
@@ -111,7 +152,7 @@
                 </div>
             </div>
             <div class="w-container">
-                <img src="wave-clipart-transparent-7.png" alt="" class="wave">
+                <img src="wave-clipart-transparent-7.png" alt="" id="wa">
             </div>
         </div>
     </div>
@@ -144,6 +185,13 @@
             const nextTide = tomorrow.MARE
             const diffTideLevel = lastTide - nextTide
             const tideDirection =  diffTideLevel > 0 ? "Descendo" : "Subindo"
+
+            const imageWave = document.getElementById("wa")
+            if(tideDirection === "Descendo") {
+                imageWave.classList.add("wave-down")
+            }else {
+                imageWave.classList.add("wave-up")
+            }
 
             const lv = document.querySelector(".level")
             lv.innerHTML = tideDirection
