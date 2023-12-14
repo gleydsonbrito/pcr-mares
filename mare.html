@@ -96,6 +96,7 @@
         .level-container {
             display: flex;
             align-items: center;
+            z-index: 1;
         }
 
         .ud {
@@ -140,7 +141,7 @@
 <body>
     <div class="m-unique-card">
         <div class="card">
-            <p>TÁBUA DE MARÉS</p>
+            <p>NÍVEL DAS MARÉS</p>
             <div class="t-container">
                 <div class="tide">
                     <p class="m-tide"></p>
@@ -152,7 +153,7 @@
                 </div>
             </div>
             <div class="w-container">
-                <img src="wave-clipart-transparent-7.png" alt="" id="wa">
+                <img src="sea.png" alt="" id="wa">
             </div>
         </div>
     </div>
@@ -177,12 +178,11 @@
             })
             //recupera dos dados de marés de ontem, hoje e amanhã
             const yesterday = events[closerHourIndex - 1].attributes
-            const tomorrow = events[closerHourIndex + 1].attributes
             const today = events[closerHourIndex].attributes
             //maré de hoje e ontem
             //calcula a diferença pra ver se a maré está subindo ou descendo
             const lastTide = yesterday.MARE
-            const nextTide = tomorrow.MARE
+            const nextTide = today.MARE
             const diffTideLevel = lastTide - nextTide
             const tideDirection =  diffTideLevel > 0 ? "Descendo" : "Subindo"
 
@@ -201,13 +201,13 @@
 
             //data em horas de ontem e amanhã
             const lastHour = new Date(yesterday.DATAHORA).getHours()
-            const nextHour = new Date(tomorrow.DATAHORA).getHours()
+            const nextHour = new Date(today.DATAHORA).getHours()
             
             //calcula a diferença das datas (como valor absoluto)
-            const diffLastNextHour = Math.abs(lastHour - nextHour)
+            const diffLastNextHour = lastHour - nextHour
 
             //calcula a variação de maré por hora
-            const tideVariationPerHour = diffTideLevel/diffLastNextHour
+            const tideVariationPerHour = Math.abs(diffTideLevel)/diffLastNextHour
 
             //clacula a difereça pra verificar o incremento
             const diffTodayYesterdayDates = Math.abs(new Date(today.DATAHORA).getHours() - lastHour)
@@ -216,7 +216,7 @@
             const mTideLevel = document.querySelector(".m-tide")
             //verificar se realmente precisa do incremento 
             //maré subindo soma, descendo subtrai
-            const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : (-1 * sumOrNotTideResult)
+            const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : ((-1) * sumOrNotTideResult)
             mTideLevel.innerHTML =`${today.MARE}m`
 
             
