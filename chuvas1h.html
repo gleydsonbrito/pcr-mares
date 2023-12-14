@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz@8..144&family=Roboto:ital,wght@0,500;1,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            color: #FFF;
+            font-family: 'Roboto', sans-serif;
+        }
+        .card {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background-color: #173DB7;
+            border-radius: 30px;
+            box-shadow: 5px 5px 5px lightgray;
+            height: 100%;
+            width: 100%;
+        }
+
+        p {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .container{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .rain > p {
+            font-size: 2rem;
+            margin-right: 30px;
+        }
+
+        .rain {
+            width: 80%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        img {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            animation-name: slideImage;
+            animation-duration: 1s;
+            animation-timing-function: ease-out;
+            
+        }
+
+        @keyframes slideImage {
+            0% {
+                left: 150px;
+                width: 2px;
+                height: 2px;
+            }
+
+            100% {
+                left: 0
+
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <p>CHUVAS EM 1 HORA</p>
+        <div class="container">
+            <div class="rain">
+                <p class="mm-rain"></p>
+                <img src="./cloud-rain.png" alt="chuva" class="icon">
+            </div>
+        </div>
+    </div>
+    <script>
+        const mmRainEndpoint  = "https://esigportal2.recife.pe.gov.br/arcgis/rest/services/SEPLAG/BASES_PLUVIOMETRO_CEMADEN_ESTACOES/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&timeRelation=esriTimeRelationOverlaps&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&sqlFormat=none&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson"
+        let mmRain = 0.0
+
+        fetch(mmRainEndpoint)
+        .then( res => res.json())
+        .then( data => data.features)
+        .then( feat => feat.filter( e => e.attributes["DBD2ESRI.ESI2.FCPLUVIOMETRO_ESTACAO.CIDADE"] === 'RECIFE') )
+        .then( mmList => {
+            mmList.forEach( att => {
+                let mmTemp = att.attributes["DBD2ESRI.ESI2.TBCEMADENESTACAO_HIST.ACC1HR"]
+                if(typeof mmTemp === 'number') {
+                    mmRain += parseFloat(mmTemp)
+                }
+            });
+            const qtMM = document.querySelector(".mm-rain")
+            qtMM.innerHTML = `${mmRain.toFixed(1)} mm`
+            return
+        } )
+
+    </script>
+</body>
+</html>

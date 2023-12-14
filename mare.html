@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz@8..144&family=Roboto:ital,wght@0,500;1,700&display=swap" rel="stylesheet">
+    <style>
+         .m-unique-card * {
+            color: #FFF;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .m-unique-card .card {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background-color: #173DB7;
+            border-radius: 30px;
+            box-shadow: 5px 5px 5px lightgray;
+            overflow: hidden;
+        }
+
+        .m-unique-card p {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .m-unique-card .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .m-unique-card .rain > .mm-rain {
+            font-size: 2rem;
+            margin-right: 30px;
+        }
+
+        .m-unique-card .rain {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .m-unique-card .icon {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            animation-name: slideImage;
+            animation-duration: 1s;
+            animation-timing-function: ease-out;
+        }
+
+        @keyframes slideImage {
+            0% {
+                top: -200px;
+                width: 2px;
+                height: 2px;
+            }
+
+            100% {
+                top: 0
+            }
+        }
+
+        .w-container {
+            position: relative;
+            bottom: -20px;
+            width: 100%;
+            height: 120px;
+        }
+
+        .wave {
+            position: relative;     
+            opacity: 0.7;
+            width: 100%;
+            height: 100%;
+            margin-bottom: -10px;
+        }
+
+        .level-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .ud {
+            position: relative;
+            margin-left: 20px;
+            width: 30px;
+            height: 30px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="m-unique-card">
+        <div class="card">
+            <p>TÁBUA DE MARÉS</p>
+            <div class="container">
+                <div class="rain">
+                    <p class="mm-rain"></p>
+                    <img src="tide.png" alt="chuva" class="icon">
+                </div>
+                <div class="level-container">
+                    <p class="level"></p>
+                    <img src="#" alt="" class="ud">
+                </div>
+            </div>
+            <div class="w-container">
+                <img src="wave-clipart-transparent-7.png" alt="" class="wave">
+            </div>
+        </div>
+    </div>
+    <script>
+        fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/COP/BASES_TABELAS_COP_CONSULTA/FeatureServer/4/query?where=DATAHORA_UTC+Between+current_timestamp+-1+and+current_timestamp+%2B1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&gdbVersion=&historicMoment=&returnDistinctValues=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&multipatchOption=xyFootprint&resultOffset=&resultRecordCount=&returnTrueCurves=false&returnCentroid=false&timeReferenceUnknownClient=false&sqlFormat=none&resultType=&featureEncoding=esriDefault&datumTransformation=&f=pjson")
+        .then( res => res.json())
+        .then( ({ features }) => features )
+        .then( events => {
+            let closerHourIndex = -1
+            let minDiffHours = Number.POSITIVE_INFINITY
+
+            events.forEach( ({ attributes }, index ) => {
+                const day = new Date(attributes.DATAHORA)
+                if(new Date(day).getDate() === new Date().getDate()) {
+                    const tempDiff =  Math.abs(day.getHours() - new Date().getHours())
+                    if(tempDiff < minDiffHours) {
+                        minDiffHours = tempDiff
+                        closerHourIndex = index
+                    }
+                }
+            })
+            //recupera dos dados de marés de ontem, hoje e amanhã
+            const yesterday = events[closerHourIndex - 1].attributes
+            const tomorrow = events[closerHourIndex + 1].attributes
+            const today = events[closerHourIndex].attributes
+            //maré de hoje e ontem
+            //calcula a diferença pra ver se a maré está subindo ou descendo
+            const lastTide = yesterday.MARE
+            const nextTide = tomorrow.MARE
+            const diffTideLevel = lastTide - nextTide
+            const tideDirection =  diffTideLevel > 0 ? "Descendo" : "Subindo"
+
+            const lv = document.querySelector(".level")
+            lv.innerHTML = tideDirection
+
+            const upOrDown = document.querySelector(".ud")
+            upOrDown.setAttribute('src', tideDirection === "Descendo" ? 'down.png' : 'up.png')
+
+            //data em horas de ontem e amanhã
+            const lastHour = new Date(yesterday.DATAHORA).getHours()
+            const nextHour = new Date(tomorrow.DATAHORA).getHours()
+            
+            //calcula a diferença das datas (como valor absoluto)
+            const diffLastNextHour = Math.abs(lastHour - nextHour)
+
+            //calcula a variação de maré por hora
+            const tideVariationPerHour = diffTideLevel/diffLastNextHour
+
+            //clacula a difereça pra verificar o incremento
+            const diffTodayYesterdayDates = Math.abs(new Date(today.DATAHORA).getHours() - lastHour)
+            const sumOrNotTideResult = tideVariationPerHour * diffTodayYesterdayDates
+                       
+            const mTideLevel = document.querySelector(".mm-rain")
+            //verificar se realmente precisa do incremento 
+            //maré subindo soma, descendo subtrai
+            const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : (-1 * sumOrNotTideResult)
+            mTideLevel.innerHTML =`${today.MARE}m`
+
+            
+
+
+            console.log("*** ", new Date(events[closerHourIndex].attributes.DATAHORA))
+            console.log("*** ", tideDirection)
+        })
+    </script>
+   </body>
+</html>
