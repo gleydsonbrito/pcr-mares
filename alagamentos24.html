@@ -11,10 +11,6 @@
             color: #FFF;
             font-family: 'Roboto', sans-serif;
         }
-        body {
-            height: 400px;
-            width: 500px;
-        }
         .card {
             display: flex;
             align-items: center;
@@ -22,8 +18,8 @@
             background-color: #173DB7;
             border-radius: 30px;
             box-shadow: 5px 5px 5px lightgray;
-            height: 50%;
-            width: 50%;
+            height: 100%;
+            width: 100%;
         }
 
         p {
@@ -52,10 +48,27 @@
             justify-content: center;
         }
 
+        .icon {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            animation-name: slideImage;
+            animation-duration: 2s;
+            animation-timing-function: ease-out;
+            
+        }
 
-        img {
-            width: 15%;
-            height: 30%;
+        @keyframes slideImage {
+            0% {
+                bottom: -200px;
+                width: 2px;
+                height: 2px;
+            }
+
+            100% {
+                bottom: 0;
+
+            }
         }
     </style>
 </head>
@@ -69,6 +82,7 @@
             </div>
         </div>
     </div>
+    <a href="index.html" style="color: blue;">Voltar para página inicial</a>
     <script>
         const floodEndpoint  = "https://esigportal2.recife.pe.gov.br/arcgis/rest/services/Geoevent/BASES_FEEDS_WAZE_1HORA//MapServer/0/query?where=1+%3D+1&text=&objectIds=&time=&timeRelation=esriTimeRelationOverlaps&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&sqlFormat=none&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson"
         let floodPoints = 0.0
