@@ -27,19 +27,19 @@
             font-weight: bold;
         }
 
-        .m-unique-card .container {
+        .m-unique-card .t-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
         }
 
-        .m-unique-card .rain > .mm-rain {
+        .m-unique-card .tide > .m-tide {
             font-size: 2rem;
             margin-right: 30px;
         }
 
-        .m-unique-card .rain {
+        .m-unique-card .tide {
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -141,9 +141,9 @@
     <div class="m-unique-card">
         <div class="card">
             <p>TÁBUA DE MARÉS</p>
-            <div class="container">
-                <div class="rain">
-                    <p class="mm-rain"></p>
+            <div class="t-container">
+                <div class="tide">
+                    <p class="m-tide"></p>
                     <img src="tide.png" alt="chuva" class="icon">
                 </div>
                 <div class="level-container">
@@ -213,7 +213,7 @@
             const diffTodayYesterdayDates = Math.abs(new Date(today.DATAHORA).getHours() - lastHour)
             const sumOrNotTideResult = tideVariationPerHour * diffTodayYesterdayDates
                        
-            const mTideLevel = document.querySelector(".mm-rain")
+            const mTideLevel = document.querySelector(".m-tide")
             //verificar se realmente precisa do incremento 
             //maré subindo soma, descendo subtrai
             const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : (-1 * sumOrNotTideResult)
