@@ -116,6 +116,7 @@
         .info-container {
             margin-top: -50px;
         }
+
     </style>
 </head>
 <body>
@@ -133,9 +134,10 @@
                     </div>
                 </div>
             </div>
-            <div class="info-container">
+            <div class="info-container"><div class="speed-container">
                 <h4 style="font-weight: normal;" class="mean-speed"></h4>
                 <h4 style="font-weight: normal;" class="mean-congestion"></h4>
+        
             </div>
         </div>
     </div>
@@ -148,44 +150,45 @@
             4: "Parado",
             5: "Vias interditadas"
         }
+       
+        setInterval(
+            fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/Geoevent/BASES_FEEDS_WAZE_1HORA/FeatureServer/1/query?where=CITY+%3D+%27Recife%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&gdbVersion=&historicMoment=&returnDistinctValues=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&multipatchOption=xyFootprint&resultOffset=&resultRecordCount=&returnTrueCurves=false&returnExceededLimitFeatures=false&quantizationParameters=&returnCentroid=false&timeReferenceUnknownClient=false&sqlFormat=none&resultType=&featureEncoding=esriDefault&datumTransformation=&f=pjson")
+            .then(res => res.json())
+            .then( ({ features }) => features)
+            .then( trafficDatas => {
+                let speedkm = 0.0
+                let countStreets = 0
+                let lengthCongestion = 0.0
+                let trafficLevel = 0
+                trafficDatas.forEach( ({ attributes }) => {
+                    countStreets+=1
+                    speedkm+=attributes.SPEEDKMH
+                    lengthCongestion+=attributes.LENGTH
+                    trafficLevel+=attributes.LEVEL
+                });
 
-        fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/Geoevent/BASES_FEEDS_WAZE_1HORA/FeatureServer/1/query?where=CITY+%3D+%27Recife%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&gdbVersion=&historicMoment=&returnDistinctValues=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&multipatchOption=xyFootprint&resultOffset=&resultRecordCount=&returnTrueCurves=false&returnExceededLimitFeatures=false&quantizationParameters=&returnCentroid=false&timeReferenceUnknownClient=false&sqlFormat=none&resultType=&featureEncoding=esriDefault&datumTransformation=&f=pjson")
-        .then(res => res.json())
-        .then( ({ features }) => features)
-        .then( trafficDatas => {
-            let speedkm = 0.0
-            let countStreets = 0
-            let lengthCongestion = 0.0
-            let trafficLevel = 0
-            trafficDatas.forEach( ({ attributes }) => {
-                countStreets+=1
-                speedkm+=attributes.SPEEDKMH
-                lengthCongestion+=attributes.LENGTH
-                trafficLevel+=attributes.LEVEL
-            });
+                const tl = document.querySelector(".m-traffic")
+                const currentLevel = Math.floor(trafficLevel/countStreets)
+                tl.innerHTML = level[currentLevel]
 
-            const tl = document.querySelector(".m-traffic")
-            const currentLevel = Math.floor(trafficLevel/countStreets)
-            tl.innerHTML = level[currentLevel]
+                if (currentLevel === 1){
+                    document.querySelector(".gball").style.opacity = 1
+                    
+                } else if (currentLevel === 2) {
+                    document.querySelector(".yball").style.opacity = 1
 
-            if (currentLevel === 1){
-                document.querySelector(".gball").style.opacity = 1
-                
-            } else if (currentLevel === 2) {
-                document.querySelector(".yball").style.opacity = 1
+                } else {
+                    document.querySelector(".rball").style.opacity = 1
 
-            } else {
-                document.querySelector(".rball").style.opacity = 1
+                } 
 
-            } 
+                const ms = document.querySelector(".mean-speed")
+                ms.innerHTML = `Velocidade média agora: ${(speedkm/countStreets).toFixed(2)} km/h`
 
-            const ms = document.querySelector(".mean-speed")
-            ms.innerHTML = `Velocidade média agora: ${(speedkm/countStreets).toFixed(2)} km/h`
-
-            const mc = document.querySelector(".mean-congestion")
-            mc.innerHTML = `Tamanho médio dos congestionamentos: ${((lengthCongestion/countStreets)/1000).toFixed(2)} km`
-        })
-
+                const mc = document.querySelector(".mean-congestion")
+                mc.innerHTML = `Tamanho médio dos congestionamentos: ${((lengthCongestion/countStreets)/1000).toFixed(2)} km`
+            })
+        , 3600000 )
     </script>
    </body>
 </html>
