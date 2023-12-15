@@ -132,7 +132,7 @@
                 top: 0px;
             }
             100% {
-                top: 40px;
+                top: 80px;
             }
         }
 
@@ -168,6 +168,8 @@
 
             events.forEach( ({ attributes }, index ) => {
                 const day = new Date(attributes.DATAHORA)
+                console.log(day)
+                //pega apenas informações do mesmo dia
                 if(new Date(day).getDate() === new Date().getDate()) {
                     const tempDiff =  Math.abs(day.getHours() - new Date().getHours())
                     if(tempDiff < minDiffHours) {
@@ -179,6 +181,8 @@
             //recupera dos dados de marés de ontem, hoje e amanhã
             const yesterday = events[closerHourIndex - 1].attributes
             const today = events[closerHourIndex].attributes
+            console.log(new Date(yesterday.DATAHORA))
+            console.log(new Date(today.DATAHORA))
             //maré de hoje e ontem
             //calcula a diferença pra ver se a maré está subindo ou descendo
             const lastTide = yesterday.MARE
@@ -200,11 +204,11 @@
             upOrDown.setAttribute('src', tideDirection === "Descendo" ? 'down.png' : 'up.png')
 
             //data em horas de ontem e amanhã
-            const lastHour = new Date(yesterday.DATAHORA).getMilliseconds() / 3600000
-            const nextHour = new Date(today.DATAHORA).getMilliseconds() / 3600000
+            const lastHour = new Date(yesterday.DATAHORA).getHours()
+            const nextHour = new Date(today.DATAHORA).getHours()
             
             //calcula a diferença das datas (como valor absoluto)
-            const diffLastNextHour = lastHour - nextHour
+            const diffLastNextHour = Math.abs(lastHour - nextHour)
 
             //calcula a variação de maré por hora
             const tideVariationPerHour = Math.abs(diffTideLevel)/diffLastNextHour
@@ -216,14 +220,11 @@
             const mTideLevel = document.querySelector(".m-tide")
             //verificar se realmente precisa do incremento 
             //maré subindo soma, descendo subtrai
-            const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : (-sumOrNotTideResult)
-            mTideLevel.innerHTML =`${today.MARE}m`
+            const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : (-1 * sumOrNotTideResult)
+            const finalTide = yesterday.MARE + tideIncrement
+            mTideLevel.innerHTML =`${finalTide.toFixed(1)}m`
 
-            
-
-
-            console.log("*** ", new Date(events[closerHourIndex].attributes.DATAHORA))
-            console.log("*** ", tideDirection)
+            return
         })
     </script>
    </body>
