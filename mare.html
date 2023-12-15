@@ -168,7 +168,7 @@
 
             events.forEach( ({ attributes }, index ) => {
                 const day = new Date(attributes.DATAHORA)
-                console.log(day)
+                //console.log(day)
                 //pega apenas informações do mesmo dia
                 if(new Date(day).getDate() === new Date().getDate()) {
                     const tempDiff =  Math.abs(day.getHours() - new Date().getHours())
@@ -181,8 +181,8 @@
             //recupera dos dados de marés de ontem, hoje e amanhã
             const yesterday = events[closerHourIndex - 1].attributes
             const today = events[closerHourIndex].attributes
-            console.log(new Date(yesterday.DATAHORA))
-            console.log(new Date(today.DATAHORA))
+            //console.log(new Date(yesterday.DATAHORA))
+            //console.log(new Date(today.DATAHORA))
             //maré de hoje e ontem
             //calcula a diferença pra ver se a maré está subindo ou descendo
             const lastTide = yesterday.MARE
