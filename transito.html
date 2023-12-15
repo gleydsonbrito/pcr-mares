@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz@8..144&family=Roboto:ital,wght@0,500;1,700&display=swap" rel="stylesheet">
+    <style>
+         .t-card * {
+            color: #FFF;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .t-card .traffic-card {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background-color: #173DB7;
+            border-radius: 30px;
+            box-shadow: 5px 5px 5px lightgray;
+            overflow: hidden;
+        }
+
+        .t-card p {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .t-card .traffic-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .t-card .traffic > .m-traffic {
+            font-size: 2rem;
+            margin-right: 20px;
+            margin-top: -9px;
+        }
+
+        .t-card .traffic {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .t-card .t-icon {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            animation-name: slideImage;
+            animation-duration: 2s;
+            animation-timing-function: ease-out;
+        }
+
+        @keyframes slideImage {
+            0% {
+                width: 2px;
+                height: 2px;
+            }
+
+            100% {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        .tsign {
+            margin-top: -10px;
+            margin-bottom: -40px;
+            width: 120px;
+        }
+
+        .rball {
+            display: flex;
+            position: relative;
+            opacity: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background-color: red;
+            bottom: 35px;
+            left: 15px;
+            box-shadow: 3px 2px 10px 10px red;
+        }
+
+        .yball {
+            display: flex;
+            position: relative;
+            opacity: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background-color: yellow;
+            bottom: 55px;
+            left: 48px;
+            box-shadow: 3px 2px 10px 10px yellow;
+        }
+
+        .gball {
+            display: flex;
+            position: relative;
+            opacity: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background-color: green;
+            bottom: 75px;
+            left: 83px;
+            box-shadow: 3px 2px 10px 10px green;
+        }
+    </style>
+</head>
+<body>
+    <div class="t-card">
+        <div class="traffic-card">
+            <p>TRÂNSITO NA CIDADE</p>
+            <div class="traffic-container">
+                <div class="traffic">
+                    <p class="m-traffic">Leve</p>
+                    <div class="car-container">
+                        <img src="sign.png" alt="" class="tsign">
+                        <div class="rball"></div>
+                        <div class="yball"></div>
+                        <div class="gball"></div>
+                    </div>
+                </div>
+            </div>
+            <h4 style="font-weight: normal;" class="mean-speed"></h4>
+            <h4 style="font-weight: normal;" class="mean-congestion"></h4>
+        </div>
+    </div>
+    <a href="index.html" style="color: blue; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Voltar para página inicial</a>
+    <script>
+        fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/Geoevent/BASES_FEEDS_WAZE_1HORA/FeatureServer/1/query?where=CITY+%3D+%27Recife%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&gdbVersion=&historicMoment=&returnDistinctValues=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&multipatchOption=xyFootprint&resultOffset=&resultRecordCount=&returnTrueCurves=false&returnExceededLimitFeatures=false&quantizationParameters=&returnCentroid=false&timeReferenceUnknownClient=false&sqlFormat=none&resultType=&featureEncoding=esriDefault&datumTransformation=&f=pjson")
+        .then(res => res.json())
+        .then( ({ features }) => features)
+        .then( trafficDatas => {
+            let speedkm = 0.0
+            let countStreets = 0
+            let meanLengthCongestion = 0.0
+            trafficDatas.forEach( ({ attributes }) => {
+                countStreets+=1
+                speedkm+=attributes.SPEEDKMH
+                meanLengthCongestion+=attributes.LENGTH
+            });
+        })
+
+    </script>
+   </body>
+</html>
