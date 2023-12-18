@@ -221,7 +221,7 @@
             //verificar se realmente precisa do incremento 
             //maré subindo soma, descendo subtrai
             const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : (-1 * sumOrNotTideResult)
-            const finalTide = yesterday.MARE + tideIncrement
+            const finalTide = Math.abs(yesterday.MARE + tideIncrement)
             mTideLevel.innerHTML =`${finalTide.toFixed(1)}m`
 
             return
