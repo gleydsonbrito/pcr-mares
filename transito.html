@@ -170,7 +170,7 @@
                         trafficLevel+=attributes.LEVEL
 
                         if(attributes.LEVEL === 5) {
-                            bannedtreet.push(attributes.STREET)
+                            bannedtreet.push({name: attributes.STREET, coords: attributes.geometry.paths[0]})
                         }
                     }
                 }
@@ -213,17 +213,23 @@
                     divContainer.style.margin = '2px 5px'
                     
                     const streeName = document.createElement("p")
-                    streeName.appendChild(document.createTextNode(street))
+                    streeName.appendChild(document.createTextNode(street.name))
                     streeName.style.fontSize = '0.9rem'
                     streeName.style.fontWeight = 'normal'
                     divContainer.appendChild(streeName)
 
+                    const [lat, long] = street.coords
+                    const mapLink = document.createElement("a")
+                    mapLink.setAttribute('href', `https://maps.google.com/?q=${lat},${long}`)
+                    mapLink.setAttribute('target', '_blank')
+
                     const iconStreet = document.createElement("img")
-                    iconStreet.setAttribute('src', 'damage.png')
+                    iconStreet.setAttribute('src', 'gmaps.png')
                     iconStreet.style.width = '35px'
                     iconStreet.style.height = '35px'
-
-                    divContainer.appendChild(iconStreet)
+                    
+                    mapLink.appendChild(iconStreet)
+                    divContainer.appendChild(mapLink)
                     infoContainer.appendChild(divContainer)
                 })
             }
