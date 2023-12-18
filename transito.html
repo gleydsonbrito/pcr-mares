@@ -157,9 +157,9 @@
             let countStreets = 0
             let lengthCongestion = 0.0
             let trafficLevel = 0
-            let bannedtreet = []
+            let bannedStreet = []
             
-            trafficDatas.forEach( ({ attributes }) => {
+            trafficDatas.forEach( ({ attributes, geometry }) => {
                 if(new Date(attributes.PUBMILLIS).getHours() === new Date().getHours()){
                     const trafficMin = new Date(attributes.PUBMILLIS).getHours()
                     const minNow = new Date().getHours()
@@ -170,7 +170,7 @@
                         trafficLevel+=attributes.LEVEL
 
                         if(attributes.LEVEL === 5) {
-                            bannedtreet.push({name: attributes.STREET, coords: attributes.geometry.paths[0]})
+                            bannedStreet.push({name: attributes.STREET, coords: geometry.paths[0]})
                         }
                     }
                 }
@@ -196,21 +196,23 @@
             const mc = document.querySelector(".mean-congestion")
             mc.innerHTML = `Tamanho médio dos congestionamentos: ${((lengthCongestion/countStreets)/1000).toFixed(2)} km`
 
-            if (bannedtreet.length > 0) {
-                const uniqueStreetsBanned = new Set(bannedtreet)
+            if (bannedStreet.length > 0) {
+                const setBannedStreets = new Set(bannedStreet)
+
                 const titleBannedStreets = document.createElement("H3")
-                titleBannedStreets.appendChild(document.createTextNode(`Ruas interditadas: ${uniqueStreetsBanned.size}`))
+                titleBannedStreets.appendChild(document.createTextNode(`Ruas interditadas: ${setBannedStreets.size}`))
                 const infoContainer = document.querySelector(".info-container")
                 infoContainer.appendChild(titleBannedStreets)
 
-                uniqueStreetsBanned.forEach( street => {
+                new Set(bannedStreet).forEach( street => {
+                    console.log(bannedStreet)
                     const divContainer = document.createElement("div")
                     divContainer.style.width = '100%'
                     divContainer.style.height = '40px'
                     divContainer.style.display = 'flex'
                     divContainer.style.justifyContent = 'space-between'
                     divContainer.style.alignItems = 'center'
-                    divContainer.style.margin = '2px 5px'
+ 
                     
                     const streeName = document.createElement("p")
                     streeName.appendChild(document.createTextNode(street.name))
@@ -218,7 +220,7 @@
                     streeName.style.fontWeight = 'normal'
                     divContainer.appendChild(streeName)
 
-                    const [lat, long] = street.coords
+                    const [long, lat] = street.coords[0]
                     const mapLink = document.createElement("a")
                     mapLink.setAttribute('href', `https://maps.google.com/?q=${lat},${long}`)
                     mapLink.setAttribute('target', '_blank')

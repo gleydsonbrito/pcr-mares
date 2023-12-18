@@ -163,28 +163,26 @@
         .then( res => res.json())
         .then( ({ features }) => features )
         .then( events => {
-            let closerHourIndex = -1
-            let minDiffHours = Number.POSITIVE_INFINITY
+            let indexBetweenTides = -1
 
-            events.forEach( ({ attributes }, index ) => {
-                const day = new Date(attributes.DATAHORA)
+            for(let i = 0; i < events.length; i++) { 
+                const day = events[i].attributes.DATAHORA
                 if(new Date(day).getDate() === new Date().getDate()) {
-                    const tempDiff =  Math.abs(day.getHours() - new Date().getHours())
-                    if(tempDiff < minDiffHours) {
-                        minDiffHours = tempDiff
-                        closerHourIndex = index
+                    if(new Date().getHours() >= new Date(events[i].attributes.DATAHORA).getHours() && new Date().getHours() <= new Date(events[i+1].attributes.DATAHORA).getHours()) {
+                        indexBetweenTides = i
+                        break
                     }
                 }
-            })
+            }
             //recupera dos dados de marés de ontem, hoje e amanhã
-            const yesterday = events[closerHourIndex - 1].attributes
-            const today = events[closerHourIndex].attributes
+            const before = events[indexBetweenTides].attributes
+            const after = events[indexBetweenTides + 1].attributes
             //maré de hoje e ontem
             //calcula a diferença pra ver se a maré está subindo ou descendo
-            const lastTide = yesterday.MARE
-            const nextTide = today.MARE
-            const diffTideLevel =  Math.abs(lastTide - nextTide)
-            const tideDirection =  diffTideLevel > 0 ? "Descendo" : "Subindo"
+            const lastTide = before.MARE
+            const nextTide = after.MARE
+            const diferenceTide =  lastTide - nextTide
+            const tideDirection =  diferenceTide > 0 ? "Descendo" : "Subindo"
 
             const imageWave = document.getElementById("wa")
             if(tideDirection === "Descendo") {
@@ -200,24 +198,23 @@
             upOrDown.setAttribute('src', tideDirection === "Descendo" ? 'https://farol.recife.pe.gov.br/wp-content/uploads/2023/12/down.png' : 'https://farol.recife.pe.gov.br/wp-content/uploads/2023/12/up.png')
 
             //data em horas de ontem e amanhã
-            const lastHour = new Date(yesterday.DATAHORA).getHours()
-            const nextHour = new Date(today.DATAHORA).getHours()
+            const beforeHour = new Date(before.DATAHORA).getHours()
+            const afterHour = new Date(after.DATAHORA).getHours()
             
             //calcula a diferença das datas (como valor absoluto)
-            const diffLastNextHour = Math.abs(lastHour - nextHour)
+            const diferenceBetweenHours = afterHour - beforeHour
 
             //calcula a variação de maré por hora
-            const tideVariationPerHour = diffTideLevel/diffLastNextHour
+            const tideVariationPerHour = Math.abs(diferenceTide)/diferenceBetweenHours
 
             //clacula a difereça pra verificar o incremento
-            const diffTodayYesterdayDates = Math.abs(new Date(today.DATAHORA).getHours() - lastHour)
-            const sumOrNotTideResult = tideVariationPerHour * diffTodayYesterdayDates
+            const sumOrNotTideResult = tideVariationPerHour * diferenceBetweenHours
                        
             const mTideLevel = document.querySelector(".m-tide")
             //verificar se realmente precisa do incremento 
             //maré subindo soma, descendo subtrai
             const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : (-1 * sumOrNotTideResult)
-            const finalTide = Math.abs(yesterday.MARE + tideIncrement)
+            const finalTide = Math.abs(before.MARE + tideIncrement)
             mTideLevel.innerHTML =`${finalTide.toFixed(1)}m`
         })
     </script>
