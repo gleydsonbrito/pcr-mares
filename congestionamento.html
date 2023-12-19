@@ -74,69 +74,43 @@
             width: 120px;
         }
 
-        .rball {
-            display: flex;
-            position: relative;
-            opacity: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 10px;
-            background-color: red;
-            bottom: 35px;
-            left: 15px;
-            box-shadow: 3px 2px 10px 10px red;
-        }
-
-        .yball {
-            display: flex;
-            position: relative;
-            opacity: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 10px;
-            background-color: yellow;
-            bottom: 55px;
-            left: 48px;
-            box-shadow: 3px 2px 10px 10px yellow;
-        }
-
-        .gball {
-            display: flex;
-            position: relative;
-            opacity: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 10px;
-            background-color: green;
-            bottom: 75px;
-            left: 83px;
-            box-shadow: 3px 2px 10px 10px green;
-        }
-
         .info-container {
             margin-top: -50px;
         }
+
+        .t-info-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .t-icons {
+            width: 40px;
+            height: 40px;
+        }
+
 
     </style>
 </head>
 <body>
     <div class="t-card">
         <div class="traffic-card">
-            <p>TRÂNSITO NA CIDADE</p>
+            <p style="margin-bottom: 40px;">CONDIÇÕES DE CONGESTIONAMENTO</p>
             <div class="traffic-container">
                 <div class="traffic">
                     <p class="m-traffic"></p>
                     <div class="car-container">
-                        <img src="sign.png" alt="" class="tsign">
-                        <div class="rball"></div>
-                        <div class="yball"></div>
-                        <div class="gball"></div>
                     </div>
                 </div>
             </div>
             <div class="info-container">
-                <h4 style="font-weight: normal; margin: 5px 10px;" class="mean-speed"></h4>
-                <h4 style="font-weight: normal; margin: 5px 10px;" class="mean-congestion"></h4>
+                <div class="t-info-container">
+                    <h4 style="font-weight: normal; margin: 20px 10px;" class="mean-speed"></h4>
+                    <img src="speedometer.png" alt="" class="t-icons">
+                </div>
+                <div class="t-info-container">
+                    <h4 style="font-weight: normal; margin: 20px 10px;" class="mean-congestion"></h4>
+                    <img src="traffic-jam.png" alt="" class="t-icons">
+                </div>
             </div>
         </div>
     </div>
@@ -176,19 +150,11 @@
                 }
             });
 
-            const tl = document.querySelector(".m-traffic")
-            const currentLevel = Math.floor(trafficLevel/countStreets)
-            tl.innerHTML = level[currentLevel]
+            const ms = document.querySelector(".mean-speed")
+            ms.innerHTML = `Velocidade média na cidade agora: ${(speedkm/countStreets).toFixed(2)} km/h`
 
-            if (currentLevel === 1){
-                document.querySelector(".gball").style.opacity = 1
-                
-            } else if (currentLevel === 2) {
-                document.querySelector(".yball").style.opacity = 1
-
-            } else {
-                document.querySelector(".rball").style.opacity = 1
-            }
+            const mc = document.querySelector(".mean-congestion")
+            mc.innerHTML = `Tamanho médio dos congestionamentos: ${((lengthCongestion/countStreets)/1000).toFixed(2)} km`
         })
     </script>
     <a href="index.html" style="color: blue; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Voltar para página inicial</a>

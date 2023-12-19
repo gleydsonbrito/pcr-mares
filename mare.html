@@ -169,7 +169,10 @@
                 console.log(new Date(events[i].attributes.DATAHORA))
                 const day = events[i].attributes.DATAHORA
                 if(new Date(day).getDate() === new Date().getDate()) {
-                    if(new Date().getHours() >= new Date(events[i].attributes.DATAHORA).getHours() && new Date().getHours() <= new Date(events[i+1].attributes.DATAHORA).getHours()) {
+                    const currentHour = ((new Date().getHours() * 60) + new Date().getMinutes())/60
+                    const beforeHour = ((new Date(events[i].attributes.DATAHORA).getHours() * 60) + new Date(events[i].attributes.DATAHORA).getMinutes())/60
+                    const afterHour = ((new Date(events[i+1].attributes.DATAHORA).getHours() * 60) + new Date(events[i+1].attributes.DATAHORA).getMinutes())/60
+                    if(currentHour >= beforeHour && currentHour <= afterHour) {
                         indexBetweenTides = i
                         break
                     }

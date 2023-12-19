@@ -32,6 +32,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
+            width: 50%;
         }
 
         .t-card .traffic > .m-traffic {
@@ -74,45 +75,6 @@
             width: 120px;
         }
 
-        .rball {
-            display: flex;
-            position: relative;
-            opacity: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 10px;
-            background-color: red;
-            bottom: 35px;
-            left: 15px;
-            box-shadow: 3px 2px 10px 10px red;
-        }
-
-        .yball {
-            display: flex;
-            position: relative;
-            opacity: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 10px;
-            background-color: yellow;
-            bottom: 55px;
-            left: 48px;
-            box-shadow: 3px 2px 10px 10px yellow;
-        }
-
-        .gball {
-            display: flex;
-            position: relative;
-            opacity: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 10px;
-            background-color: green;
-            bottom: 75px;
-            left: 83px;
-            box-shadow: 3px 2px 10px 10px green;
-        }
-
         .info-container {
             margin-top: -50px;
         }
@@ -122,33 +84,13 @@
 <body>
     <div class="t-card">
         <div class="traffic-card">
-            <p>TRÂNSITO NA CIDADE</p>
+            <p>VIAS INTERDITADAS</p>
             <div class="traffic-container">
-                <div class="traffic">
-                    <p class="m-traffic"></p>
-                    <div class="car-container">
-                        <img src="sign.png" alt="" class="tsign">
-                        <div class="rball"></div>
-                        <div class="yball"></div>
-                        <div class="gball"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="info-container">
-                <h4 style="font-weight: normal; margin: 5px 10px;" class="mean-speed"></h4>
-                <h4 style="font-weight: normal; margin: 5px 10px;" class="mean-congestion"></h4>
+
             </div>
         </div>
     </div>
     <script>
-        const level = {
-            1: "Leve",
-            2: "Moderado",
-            3: "Intenso",
-            4: "Parado",
-            5: "Vias interditadas"
-        }
-
         fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/Geoevent/BASES_FEEDS_WAZE_1HORA/FeatureServer/1/query?where=CITY+%3D+%27Recife%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&gdbVersion=&historicMoment=&returnDistinctValues=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&multipatchOption=xyFootprint&resultOffset=&resultRecordCount=&returnTrueCurves=false&returnExceededLimitFeatures=false&quantizationParameters=&returnCentroid=false&timeReferenceUnknownClient=false&sqlFormat=none&resultType=&featureEncoding=esriDefault&datumTransformation=&f=pjson")
         .then(res => res.json())
         .then( ({ features }) => features)
@@ -159,35 +101,70 @@
             let trafficLevel = 0
             let bannedStreet = []
             
-            trafficDatas.forEach( ({ attributes, geometry }) => {
-                if(new Date(attributes.PUBMILLIS).getHours() === new Date().getHours()){
-                    const trafficMin = new Date(attributes.PUBMILLIS).getHours()
-                    const minNow = new Date().getHours()
-                    if(trafficMin >= minNow - 5 && trafficMin <= minNow){
-                        countStreets+=1
-                        speedkm+=attributes.SPEEDKMH
-                        lengthCongestion+=attributes.LENGTH
-                        trafficLevel+=attributes.LEVEL
-
-                        if(attributes.LEVEL === 5) {
-                            bannedStreet.push({name: attributes.STREET, coords: geometry.paths[0]})
+            if(trafficDatas.length > 0){
+                trafficDatas.forEach( ({ attributes, geometry }) => {
+                    if(new Date(attributes.PUBMILLIS).getHours() === new Date().getHours()){
+                            countStreets+=1
+                            speedkm+=attributes.SPEEDKMH
+                            lengthCongestion+=attributes.LENGTH
+                            trafficLevel+=attributes.LEVEL
+    
+                            if(attributes.LEVEL === 5) {
+                                bannedStreet.push({name: attributes.STREET, coords: geometry.paths[0]})
                         }
                     }
+                });
+            }
+            let uniqueBannedStreets = []
+
+            console.log(bannedStreet.length)
+
+            bannedStreet.forEach(street => {
+                const sn = street.name
+                if(uniqueBannedStreets.length === 0){
+                    uniqueBannedStreets.push(street)
                 }
-            });
+                bannedStreet = bannedStreet.filter( bs => bs.name !== sn)
+            })
 
-            const tl = document.querySelector(".m-traffic")
-            const currentLevel = Math.floor(trafficLevel/countStreets)
-            tl.innerHTML = level[currentLevel]
+            const titleBannedStreets = document.createElement("H3")
+            titleBannedStreets.appendChild(document.createTextNode(`Vias interditadas na última hora: ${uniqueBannedStreets.length}`))
+            const tc = document.querySelector(".traffic-container")
+            tc.appendChild(titleBannedStreets)
 
-            if (currentLevel === 1){
-                document.querySelector(".gball").style.opacity = 1
+
+            if (uniqueBannedStreets.length > 0) {
                 
-            } else if (currentLevel === 2) {
-                document.querySelector(".yball").style.opacity = 1
+                uniqueBannedStreets.forEach( street => {
+                    console.log(bannedStreet)
+                    const divContainer = document.createElement("div")
+                    divContainer.style.width = '100%'
+                    divContainer.style.height = '40px'
+                    divContainer.style.display = 'flex'
+                    divContainer.style.justifyContent = 'space-between'
+                    divContainer.style.alignItems = 'center'
+ 
+                    
+                    const streeName = document.createElement("p")
+                    streeName.appendChild(document.createTextNode(street.name))
+                    streeName.style.fontSize = '0.9rem'
+                    streeName.style.fontWeight = 'normal'
+                    divContainer.appendChild(streeName)
 
-            } else {
-                document.querySelector(".rball").style.opacity = 1
+                    const [long, lat] = street.coords[0]
+                    const mapLink = document.createElement("a")
+                    mapLink.setAttribute('href', `https://maps.google.com/?q=${lat},${long}`)
+                    mapLink.setAttribute('target', '_blank')
+
+                    const iconStreet = document.createElement("img")
+                    iconStreet.setAttribute('src', 'gmaps.png')
+                    iconStreet.style.width = '35px'
+                    iconStreet.style.height = '35px'
+                    
+                    mapLink.appendChild(iconStreet)
+                    divContainer.appendChild(mapLink)
+                    tc.appendChild(divContainer)
+                })
             }
         })
     </script>
