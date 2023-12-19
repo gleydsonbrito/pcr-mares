@@ -159,13 +159,14 @@
     </div>
     <a href="index.html" style="color: blue;">Voltar para página inicial</a>
     <script>
-        fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/COP/BASES_TABELAS_COP_CONSULTA/FeatureServer/4/query?where=DATAHORA_UTC+Between+current_timestamp+-1+and+current_timestamp+%2B1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&gdbVersion=&historicMoment=&returnDistinctValues=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&multipatchOption=xyFootprint&resultOffset=&resultRecordCount=&returnTrueCurves=false&returnCentroid=false&timeReferenceUnknownClient=false&sqlFormat=none&resultType=&featureEncoding=esriDefault&datumTransformation=&f=pjson")
+        fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/COP/BASES_TABELAS_COP_CONSULTA/FeatureServer/4/query?where=DATAHORA+Between+current_timestamp+-1+and+current_timestamp+%2B1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&gdbVersion=&historicMoment=&returnDistinctValues=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&multipatchOption=xyFootprint&resultOffset=&resultRecordCount=&returnTrueCurves=false&returnCentroid=false&timeReferenceUnknownClient=false&sqlFormat=none&resultType=&featureEncoding=esriDefault&datumTransformation=&f=pjson")
         .then( res => res.json())
         .then( ({ features }) => features )
         .then( events => {
             let indexBetweenTides = -1
 
             for(let i = 0; i < events.length; i++) { 
+                console.log(new Date(events[i].attributes.DATAHORA))
                 const day = events[i].attributes.DATAHORA
                 if(new Date(day).getDate() === new Date().getDate()) {
                     if(new Date().getHours() >= new Date(events[i].attributes.DATAHORA).getHours() && new Date().getHours() <= new Date(events[i+1].attributes.DATAHORA).getHours()) {
@@ -181,6 +182,7 @@
             //calcula a diferença pra ver se a maré está subindo ou descendo
             const lastTide = before.MARE
             const nextTide = after.MARE
+
             const diferenceTide =  lastTide - nextTide
             const tideDirection =  diferenceTide > 0 ? "Descendo" : "Subindo"
 
@@ -198,8 +200,10 @@
             upOrDown.setAttribute('src', tideDirection === "Descendo" ? 'https://farol.recife.pe.gov.br/wp-content/uploads/2023/12/down.png' : 'https://farol.recife.pe.gov.br/wp-content/uploads/2023/12/up.png')
 
             //data em horas de ontem e amanhã
-            const beforeHour = new Date(before.DATAHORA).getHours()
-            const afterHour = new Date(after.DATAHORA).getHours()
+            const beforeHourInMinutes = (new Date(before.DATAHORA).getHours()*60) + new Date(before.DATAHORA).getMinutes()
+            const afterHourInMinutes =  (new Date(after.DATAHORA).getHours()*60) + new Date(after.DATAHORA).getMinutes()
+            const beforeHour = beforeHourInMinutes / 60
+            const afterHour = afterHourInMinutes / 60
             
             //calcula a diferença das datas (como valor absoluto)
             const diferenceBetweenHours = afterHour - beforeHour
@@ -208,14 +212,15 @@
             const tideVariationPerHour = Math.abs(diferenceTide)/diferenceBetweenHours
 
             //clacula a difereça pra verificar o incremento
-            const sumOrNotTideResult = tideVariationPerHour * diferenceBetweenHours
+            const hourDiferenceNowToLast = ((new Date().getHours()*60 + new Date().getMinutes())/60 )- beforeHour
+            const sumOrNotTideResult = tideVariationPerHour * hourDiferenceNowToLast
                        
             const mTideLevel = document.querySelector(".m-tide")
             //verificar se realmente precisa do incremento 
             //maré subindo soma, descendo subtrai
             const tideIncrement = tideDirection === "Subindo" ? sumOrNotTideResult : (-1 * sumOrNotTideResult)
-            const finalTide = Math.abs(before.MARE + tideIncrement)
-            mTideLevel.innerHTML =`${finalTide.toFixed(1)}m`
+            const finalTide = before.MARE + tideIncrement
+            mTideLevel.innerHTML =`${finalTide. toFixed(1).replace(".", ",")}m`
         })
     </script>
    </body>

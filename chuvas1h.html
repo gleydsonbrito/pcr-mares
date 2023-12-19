@@ -7,11 +7,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz@8..144&family=Roboto:ital,wght@0,500;1,700&display=swap" rel="stylesheet">
     <style>
-        * {
+        .unique-card-rain2 * {
             color: #FFF;
             font-family: 'Roboto', sans-serif;
         }
-        .card {
+
+        .unique-card-rain2 .card2 {
             display: flex;
             align-items: center;
             flex-direction: column;
@@ -22,12 +23,12 @@
             width: 100%;
         }
 
-        p {
+        .unique-card-rain2 p {
             font-size: 1.2rem;
             font-weight: bold;
         }
 
-        .container{
+        .unique-card-rain2 .container {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -35,12 +36,12 @@
             height: 100%;
         }
 
-        .rain > p {
+        .unique-card-rain2 .rain2 > p {
             font-size: 2rem;
             margin-right: 30px;
         }
 
-        .rain {
+        .unique-card-rain2 .rain2 {
             width: 80%;
             display: flex;
             flex-direction: row;
@@ -48,14 +49,13 @@
             justify-content: center;
         }
 
-        .icon {
+        .unique-card-rain2 .icon {
             position: relative;
             width: 80px;
             height: 80px;
             animation-name: slideImage;
             animation-duration: 2s;
             animation-timing-function: ease-out;
-            
         }
 
         @keyframes slideImage {
@@ -72,38 +72,40 @@
     </style>
 </head>
 <body>
-    <div class="card">
-        <p>CHUVAS EM 1 HORA</p>
-        <div class="container">
-            <div class="rain">
-                <p class="mm-rain"></p>
-                <img src="mrain.gif" alt="chuva" class="icon">
+    <div class="unique-card-rain2">
+        <div class="card2">
+            <p>CHUVAS EM 1 HORA</p>
+            <div class="container">
+                <div class="rain2">
+                    <p class="mm-rain2"></p>
+                    <img src="https://farol.recife.pe.gov.br/wp-content/uploads/2023/12/mrain.gif" alt="chuva" class="icon">
+                </div>
             </div>
         </div>
     </div>
-    <a href="index.html" style="color: blue;">Voltar para página inicial</a>
     <script>
-        const mmRainEndpoint  = "https://esigportal2.recife.pe.gov.br/arcgis/rest/services/SEPLAG/BASES_PLUVIOMETRO_CEMADEN_ESTACOES/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&timeRelation=esriTimeRelationOverlaps&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&sqlFormat=none&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson"
-        let mmRain = 0.0
-        let qtWaterStations = 0
+        const mmRainEndpoint2  = "https://esigportal2.recife.pe.gov.br/arcgis/rest/services/SEPLAG/BASES_PLUVIOMETRO_CEMADEN_ESTACOES/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&timeRelation=esriTimeRelationOverlaps&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&sqlFormat=none&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson"
+        let mmRain2 = 0.0
+        let qtWaterStations2 = 0
 
-        fetch(mmRainEndpoint)
-        .then( res => res.json())
-        .then( data => data.features)
-        .then( feat => feat.filter( e => e.attributes["DBD2ESRI.ESI2.FCPLUVIOMETRO_ESTACAO.CIDADE"] === 'RECIFE') )
-        .then( mmList => {
-            mmList.forEach( att => {
-                let mmTemp = att.attributes["DBD2ESRI.ESI2.TBCEMADENESTACAO_HIST.ACC1HR"]
-                if(typeof mmTemp === 'number') {
-                    mmRain += parseFloat(mmTemp)
-                    qtWaterStations+=1
+        fetch(mmRainEndpoint2)
+        .then( res2 => res2.json())
+        .then( data2 => data2.features)
+        .then( feat2 => feat2.filter( e => e.attributes["DBD2ESRI.ESI2.FCPLUVIOMETRO_ESTACAO.CIDADE"] === 'RECIFE') )
+        .then( mmList2 => {
+            mmList2.forEach( att2 => {
+                let mmTemp2 = att2.attributes["DBD2ESRI.ESI2.TBCEMADENESTACAO_HIST.ACC1HR"]
+                if(typeof mmTemp2 === 'number') {
+                  	console.log(mmTemp2)
+                    mmRain2 += parseFloat(mmTemp2)
+                    qtWaterStations2+=1
                 }
             });
-            const qtMM = document.querySelector(".mm-rain")
-            const meanMM = mmRain/qtWaterStations
-            qtMM.innerHTML = `${typeof meanMM === 'number' ? 0 : meanMM.toFixed(1)} mm`
+            const qtMM2 = document.querySelector(".mm-rain2")
+            const meanMM2 = parseFloat(mmRain2/qtWaterStations2)
+            qtMM2.innerHTML = `${!isNaN(meanMM2) ? meanMM2.toFixed(1).replace(".", ",") : 0.0} mm`
             return
-        })
+        } )
     </script>
 </body>
 </html>
