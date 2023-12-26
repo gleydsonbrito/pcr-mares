@@ -7,12 +7,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz@8..144&family=Roboto:ital,wght@0,500;1,700&display=swap" rel="stylesheet">
     <style>
-         .t-card * {
+         .vt-card * {
             color: #FFF;
             font-family: 'Roboto', sans-serif;
         }
 
-        .t-card .traffic-card {
+        .vt-card .vtraffic-card {
             display: flex;
             align-items: center;
             flex-direction: column;
@@ -22,12 +22,12 @@
             overflow: hidden;
         }
 
-        .t-card p {
+        .vt-card p {
             font-size: 1.2rem;
             font-weight: bold;
         }
 
-        .t-card .traffic-container {
+        .vt-card .vtraffic-container {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -35,20 +35,20 @@
             width: 50%;
         }
 
-        .t-card .traffic > .m-traffic {
+        .vt-card .vtraffic > .vm-traffic {
             font-size: 2rem;
             margin-right: 20px;
             margin-top: -9px;
         }
 
-        .t-card .traffic {
+        .vt-card .traffic {
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
         }
 
-        .t-card .t-icon {
+        .vt-card .vt-icon {
             position: relative;
             width: 60px;
             height: 60px;
@@ -69,23 +69,23 @@
             }
         }
 
-        .tsign {
+        .vtsign {
             margin-top: -10px;
             margin-bottom: -40px;
             width: 120px;
         }
 
-        .info-container {
+        .vinfo-container {
             margin-top: -50px;
         }
 
     </style>
 </head>
 <body>
-    <div class="t-card">
-        <div class="traffic-card">
+    <div class="vt-card">
+        <div class="vtraffic-card">
             <p>VIAS INTERDITADAS</p>
-            <div class="traffic-container">
+            <div class="vtraffic-container">
 
             </div>
         </div>
@@ -110,7 +110,11 @@
                             trafficLevel+=attributes.LEVEL
     
                             if(attributes.LEVEL === 5) {
-                                bannedStreet.push({name: attributes.STREET, coords: geometry.paths[0]})
+                                fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=-8.019933131732952&lon=-34.9389064891326")
+                                .then(res => res.json())
+                                .then( ({address: suburb}) => {
+                                    bannedStreet.push({name: attributes.STREET, bairro: suburb, coords: geometry.paths[0]})
+                                })
                         }
                     }
                 });
@@ -129,7 +133,7 @@
 
             const titleBannedStreets = document.createElement("H3")
             titleBannedStreets.appendChild(document.createTextNode(`Vias interditadas na última hora: ${uniqueBannedStreets.length}`))
-            const tc = document.querySelector(".traffic-container")
+            const tc = document.querySelector(".vtraffic-container")
             tc.appendChild(titleBannedStreets)
 
 
@@ -151,9 +155,16 @@
                     streeName.style.fontWeight = 'normal'
                     divContainer.appendChild(streeName)
 
+                    const suburName = document.createElement("p")
+                    suburName.appendChild(document.createTextNode(street.suburb))
+                    suburName.style.fontSize = '0.9rem'
+                    suburName.style.fontWeight = 'normal'
+                    divContainer.appendChild(suburName)
+
                     const [long, lat] = street.coords[0]
                     const mapLink = document.createElement("a")
                     mapLink.setAttribute('href', `https://maps.google.com/?q=${lat},${long}`)
+
                     mapLink.setAttribute('target', '_blank')
 
                     const iconStreet = document.createElement("img")

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz@8..144&family=Roboto:ital,wght@0,500;1,700&display=swap" rel="stylesheet">
+    <style>
+         .temp-card * {
+            color: #FFF;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .temp-card .temp-index-card {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background-color: #173DB7;
+            border-radius: 30px;
+            box-shadow: 5px 5px 5px lightgray;
+            overflow: hidden;
+        }
+
+        .temp-card .temp-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .temp-card .temp-index-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 40%;
+        }
+
+        .temp-card .temp-icon {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            animation-name: slideImage;
+            animation-duration: 2s;
+            animation-timing-function: ease-out;
+        }
+
+        @keyframes slideImage {
+            0% {
+                width: 2px;
+                height: 2px;
+            }
+
+            100% {
+                width: 50px;
+                height: 50px;
+            }
+        }
+        
+        .temp-icon-thermometer {
+            width: 50px;
+            height: 50px;
+        }
+
+        .temperature {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="temp-card">
+        <div class="temp-index-card">
+            <p class="temp-title">ÍNDICE DE CALOR</p>
+            <div class="temp-index-container">
+                <img src="hot.png" alt="" class="temp-icon-thermometer temp-icon">
+                <p class="temperature" id="tmm"></p>
+                <p class="temperature">°C</p>
+            </div>
+            <h2 class="temp-alert">CUIDADO</h2>
+        </div>
+    </div>
+    <script>
+        const COD_RECIFE = "SBRF"
+        fetch(`http://servicos.cptec.inpe.br/XML/estacao/${COD_RECIFE}/condicoesAtuais.xml`)
+            .then(resTemp => resTemp.text())
+            .then(resTemp => {
+                const parser = new DOMParser()
+                const xmlDocTemp = parser.parseFromString(resTemp, 'text/xml')
+                const currentTemp = parseFloat(xmlDocTemp.getElementsByTagName('temperatura')[0].textContent)
+                const temMaxMin = document.getElementById('tmm')
+                temMaxMin.innerHTML =  `${currentTemp.toFixed(0)}`
+
+                const tempAlert = document.querySelector('.temp-alert')
+                if(currentTemp <= 26){
+                    tempAlert.innerHTML = "BAIXA"
+                }else if(currentTemp > 26 && currentTemp <= 29) {
+                    tempAlert.innerHTML = "NORMAL"
+                }else if(currentTemp > 29 ) {
+                    tempAlert.innerHTML = "CUIDADO"
+                }
+            })
+    </script>
+    <a href="index.html" style="color: blue; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Voltar para página inicial</a>
+   </body>
+</html>

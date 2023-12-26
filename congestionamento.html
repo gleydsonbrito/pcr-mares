@@ -7,12 +7,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz@8..144&family=Roboto:ital,wght@0,500;1,700&display=swap" rel="stylesheet">
     <style>
-         .t-card * {
+         .ct-card * {
             color: #FFF;
             font-family: 'Roboto', sans-serif;
         }
 
-        .t-card .traffic-card {
+        .ct-card .ctraffic-card {
             display: flex;
             align-items: center;
             flex-direction: column;
@@ -22,32 +22,32 @@
             overflow: hidden;
         }
 
-        .t-card p {
+        .ct-card p {
             font-size: 1.2rem;
             font-weight: bold;
         }
 
-        .t-card .traffic-container {
+        .ct-card .ctraffic-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
         }
 
-        .t-card .traffic > .m-traffic {
+        .ct-card .ctraffic > .cm-traffic {
             font-size: 2rem;
             margin-right: 20px;
             margin-top: -9px;
         }
 
-        .t-card .traffic {
+        .ct-card .ctraffic {
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
         }
 
-        .t-card .t-icon {
+        .ct-card .ct-icon {
             position: relative;
             width: 60px;
             height: 60px;
@@ -68,48 +68,48 @@
             }
         }
 
-        .tsign {
+        .ctsign {
             margin-top: -10px;
             margin-bottom: -40px;
             width: 120px;
         }
 
-        .info-container {
+        .cinfo-container {
             margin-top: -50px;
         }
 
-        .t-info-container {
+        .ct-info-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .t-icons {
-            width: 40px;
-            height: 40px;
+        .ct-icons {
+            width: 60px;
+            height: 30px;
         }
 
 
     </style>
 </head>
 <body>
-    <div class="t-card">
-        <div class="traffic-card">
+    <div class="ct-card">
+        <div class="ctraffic-card">
             <p style="margin-bottom: 40px;">CONDIÇÕES DE CONGESTIONAMENTO</p>
-            <div class="traffic-container">
-                <div class="traffic">
-                    <p class="m-traffic"></p>
-                    <div class="car-container">
+            <div class="ctraffic-container">
+                <div class="ctraffic">
+                    <p class="cm-traffic"></p>
+                    <div class="ccar-container">
                     </div>
                 </div>
             </div>
-            <div class="info-container">
-                <div class="t-info-container">
-                    <h4 style="font-weight: normal; margin: 20px 10px;" class="mean-speed"></h4>
-                    <img src="speedometer.png" alt="" class="t-icons">
+            <div class="cinfo-container">
+                <div class="ct-info-container">
+                    <h4 style="font-weight: normal; margin: 20px 10px;" class="cmean-speed"></h4>
+                    <img src="vlg.gif" alt="" class="ct-icons">
                 </div>
-                <div class="t-info-container">
-                    <h4 style="font-weight: normal; margin: 20px 10px;" class="mean-congestion"></h4>
-                    <img src="traffic-jam.png" alt="" class="t-icons">
+                <div class="ct-info-container">
+                    <h4 style="font-weight: normal; margin: 20px 10px;" class="cmean-congestion"></h4>
+                    <img src="traffic-jam.png" alt="" class="ct-icons">
                 </div>
             </div>
         </div>
@@ -150,10 +150,10 @@
                 }
             });
 
-            const ms = document.querySelector(".mean-speed")
+            const ms = document.querySelector(".cmean-speed")
             ms.innerHTML = `Velocidade média na cidade agora: ${(speedkm/countStreets).toFixed(2)} km/h`
 
-            const mc = document.querySelector(".mean-congestion")
+            const mc = document.querySelector(".cmean-congestion")
             mc.innerHTML = `Tamanho médio dos congestionamentos: ${((lengthCongestion/countStreets)/1000).toFixed(2)} km`
         })
     </script>
