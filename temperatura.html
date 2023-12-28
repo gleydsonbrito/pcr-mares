@@ -88,9 +88,7 @@
         const day = new Date()
 
 
-        fetch('https://login.meteomatics.com/api/v1/token', {
-        method: 'GET', headers:headers,
-        })
+        fetch('https://login.meteomatics.com/api/v1/token', {method: 'GET', headers:headers})
         .then(res => res.json())
         .then(data => data.access_token)
         .then( token => {

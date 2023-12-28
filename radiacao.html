@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz@8..144&family=Roboto:ital,wght@0,500;1,700&display=swap" rel="stylesheet">
+    <style>
+         .rad-card * {
+            color: #FFF;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .rad-card .rad-index-card {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background-color: #173DB7;
+            border-radius: 30px;
+            box-shadow: 5px 5px 5px lightgray;
+            overflow: hidden;
+        }
+
+        .rad-card .rad-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .rad-card .rad-index-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 30%;
+        }
+
+        .rad-card .rad-icon {
+            position: relative;
+            animation-name: slideImage;
+            animation-duration: 2s;
+            animation-timing-function: ease-out;
+            width: 45px;
+            height: 45px;
+        }
+
+        @keyframes slideImage {
+            0% {
+                width: 2px;
+                height: 2px;
+            }
+
+            100% {
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        .rad-uv {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .container-alert-uv {
+            height: 60px;
+            display: flex;
+            justify-content: baseline;
+            align-items: center;
+        }
+
+        .uv-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            animation-name: pulse;
+            animation-timing-function: linear;
+            animation-duration: 1.5s;
+            animation-iteration-count: infinite;
+
+        }
+
+        .rad-alert {
+            margin-right: 40px;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1.);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1.);
+            }
+        }
+
+        @keyframes show {
+            0% {}
+            50% { text-shadow: 
+                0 0 5px #3CCF4E,
+                0 0 25px #3CCF4E,
+                0 0 50px #3CCF4E,
+                0 0 100px #3CCF4E;}
+            100% {}
+}
+    </style>
+</head>
+<body>
+    <div class="rad-card">
+        <div class="rad-index-card">
+            <p class="rad-title">ÍNDICE UV</p>
+            <div class="rad-index-container">
+                <img src="hot.png" alt="" class="rad-icon-uv rad-icon">
+                <p class="rad-uv" id="uv-idx"></p>
+                <p class="rad-uv">UV</p>
+            </div>
+            <div class="container-alert-uv">
+                <h2 class="rad-alert"></h2>
+                <div class="uv-color"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const getUV = "https://esigportal2.recife.pe.gov.br/arcgis/rest/services/COP/BASES_TABELAS_COP_CONSULTA/FeatureServer/9/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&gdbVersion=&historicMoment=&returnDistinctValues=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&multipatchOption=xyFootprint&resultOffset=&resultRecordCount=&returnTrueCurves=false&returnCentroid=false&timeReferenceUnknownClient=false&sqlFormat=none&resultType=&featureEncoding=esriDefault&datumTransformation=&f=pjson"
+        
+        fetch(getUV)
+            .then(res => res.json())
+            .then( ({ features }) => features)
+            .then( features => {
+               return features.filter( ({ attributes }) => new Date(attributes.DT_ATUALIZA).getFullYear() === new Date().getFullYear() 
+               && new Date(attributes.DT_ATUALIZA).getMonth() === new Date().getMonth()
+               && new Date(attributes.DT_ATUALIZA).getDate() === new Date().getDate());
+            })
+            .then( features => features[0].attributes )
+            .then( radiationData => {
+                const uv = radiationData.UV
+                const uvIdx = document.querySelector('#uv-idx')
+                uvIdx.innerHTML = uv
+
+                const uvAlert = document.querySelector('.rad-alert')
+                const uvColor = document.querySelector('.uv-color')
+                if(uv <= 2) {
+                    uvAlert.innerHTML = 'NORMAL'
+                    uvColor.style.backgroundColor = '#39F74E'
+                    uvColor.style.boxShadow = '3px 1px 10px 12px #39F74E' 
+                } else if (uv > 2 && uv <= 5) {
+                    uvAlert.innerHTML = 'MODERADO'
+                    uvColor.style.backgroundColor = '#39F74E'
+                    uvColor.style.boxShadow = '3px 1px 10px 12px #39F74E' 
+                } else if (uv > 5 && uv <= 7) {
+                    uvAlert.innerHTML = 'ALTO'
+                    uvColor.style.backgroundColor = '#FF2E07'
+                    uvColor.style.boxShadow = '3px 1px 10px 12px #FF2E07' 
+                } else if (uv > 7 && uv <= 10) {
+                    uvAlert.innerHTML = 'MUITO ALTO'       
+                    uvColor.style.backgroundColor = '#FF0010'
+                    uvColor.style.boxShadow = '3px 1px 10px 12px #FF0010'
+                } else if(uv > 11) {
+                    uvAlert.innerHTML = 'EXTREMO'
+                    uvColor.style.backgroundColor = '#B701FF'
+                    uvColor.style.boxShadow = '3px 1px 10px 12px #B701FF' 
+                }
+            })
+        
+    </script>
+    <a href="index.html" style="color: blue; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Voltar para página inicial</a>
+   </body>
+</html>
+
+
