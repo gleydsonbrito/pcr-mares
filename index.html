@@ -14,8 +14,12 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            margin: 0 50px;
         }
 
         .button {
@@ -28,19 +32,22 @@
             font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
             text-decoration: none;
             margin-bottom: 30px;
+            width: 80%;
         }
     </style>
 </head>
 <body>
-    <img src="brasaopcr.png" alt="" style="width: 200px; height: 200px; margin-bottom: 30px;">
-    <a href="chuvas1h.html" class="button">Precipitação de Chuvas na última hora</a>
-    <a href="chuvas24h.html" class="button">Precipitação de Chuvas nas últimas 24 horas</a>
-    <a href="alagamentos24.html" class="button">Pontos de alagamentos nas últimas 24h</a>
-    <a href="mare.html" class="button">Movimento da maré</a>
-    <a href="transito.html" class="button">Trânsito na cidade</a>
-    <a href="congestionamento.html" class="button">Congestionamento</a>
-    <a href="viasInterditadas.html" class="button">Vias interditadas</a>
-    <a href="temperatura.html" class="button">Temperatura</a>
-    <a href="radiacao.html" class="button">Índice UV</a>
+    <img src="brasaopcr.png" alt="" style="width: 200px; height: 200px; margin-bottom: 30px; align-self: center;">
+    <div class="grid-container">
+        <a href="chuvas1h.html" class="button">Precipitação de Chuvas na última hora</a>
+        <a href="chuvas24h.html" class="button">Precipitação de Chuvas nas últimas 24 horas</a>
+        <a href="alagamentos24.html" class="button">Pontos de alagamentos nas últimas 24h</a>
+        <a href="mare.html" class="button">Movimento da maré</a>
+        <a href="transito.html" class="button">Trânsito na cidade</a>
+        <a href="congestionamento.html" class="button">Congestionamento</a>
+        <a href="viasInterditadas.html" class="button">Vias interditadas</a>
+        <a href="temperatura.html" class="button">Temperatura</a>
+        <a href="radiacao.html" class="button">Índice UV</a>
+    </div>
 </body>
 </html>
