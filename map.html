@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <script src="https://unpkg.com/wrld.js@1.x.x"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.css" rel="stylesheet" />
+  </head>
+  
+  <body>
+  <div style="position: relative">
+    <div id="map" style="height: 400px"></div>
+    <script>
+      var map = Wrld.map("map", "your_api_key_here", {
+        center: [-8.0173242,-34.9620675],
+        zoom: 13
+      });
+
+      [
+      "-8.0173242",
+      "-8.0154750",
+      "-34.9620675",
+      "-34.9591284"
+    ]
+
+      var polygonPoints = [
+        [-8.0173242,-34.9620675],
+        [-8.0154750, -34.9591284]];
+      var poly = Wrld.polygon(polygonPoints).addTo(map);
+    </script>
+  </div>
+  </body>
+</html>
