@@ -16,6 +16,7 @@
             display: flex;
             align-items: center;
             flex-direction: column;
+            height: 200px;
             width: 100%;
             background-color: #173DB7;
             border-radius: 30px;
@@ -31,17 +32,56 @@
 
         .container-general-infos {
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            width: 50vw;
-            padding: 20px 10px;
-            background-color: black;
+            justify-content: space-between;
+            width: 40%;
+
         }
 
         .temp-card .container-temp-icon {
+            padding-top: 10px;
+            margin: 0;
             display: flex;
             align-items: center;
-            justify-content: flex-start;          
+            justify-content: center;  
+            width: 100px;
+            height: 100px;
+        }
+
+        .current-temp {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .temp-icon {
+            width: 80px;
+            height: 70px;
+            margin-top: 0;
+        }
+
+        .icontainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .obs-sky {
+            font-size: 0.7rem;
+            margin-top: 0px;
+        }
+
+        .msg-box-color {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            padding: 5px 15px;
+        }
+
+        .msg {
+            margin: 0;
+            font-size: 1rem;
         }
 
     </style>
@@ -49,44 +89,98 @@
 <body>
     <div class="temp-card">
         <div class="temp-index-card">
-            <p class="temp-title">ÍNDICE DE CALOR</p>
+            <p class="temp-title">Índice de Calor</p>
             <div class="container-general-infos">
                 <div class="container-temp-icon">
-                    <img src="" alt="" class="weather-icon">
-                    <p class="temp-card current-temp">TESTE</p>
+                    <p class="current-temp" id="ct"></p>
                 </div>
-                <h2>TESTE 2</h2>
-
+                <div class="icontainer">
+                    <img src="" alt="" class="temp-icon">
+                    <p class="obs-sky"></p>
+                    <div class="msg-box-color">
+                        <p class="msg"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <script>
-        function convertToCelsius(t) {
-            return (t - 32) * 5/9
+        function celsiusToFahrenheit(c) {
+            const nTemmp = parseFloat(c.substring(0,2))
+            return (nTemmp * 9/5) + 32
         }
 
-        const url = 'https://open-weather13.p.rapidapi.com/city/recife';
-        const options = {
-            method: 'GET',
-            headers: {
-                'X-RapidAPI-Key': '5b155a0580msh3ab87547eb8f3cfp1f3b29jsnd9733114bb0a',
-                'X-RapidAPI-Host': 'open-weather13.p.rapidapi.com'
+        function fahrenheitToCelsius(f) {
+            return (f - 32) * 5/9
+        }
+
+        function getRH(ur) {
+            const nUr = parseFloat(ur.substring(0,2))
+            return nUr/100
+        }
+
+        function calcStarHeatIndex(T, RH) {
+            return 1.1 * T - 10.3 + 0.047 * RH
+        }
+
+        function calculateHeatIndex(shi, T, RH) {
+            if(shi < 80) {
+                return shi
+            } else {
+                shi = -42.379 + 2.04901523*Math.pow(T,2) + 10.14333127*RH - 0.22475541*T*RH - 6.83783*Math.pow(10,-3)*Math.pow(T,2) - 5.481717*Math.pow(10, -2)*Math.pow(RH,2) + 1.22874*Math.pow(10,-3)*math.pow(T,2)*RH + 8.5282*Math.pow(10,-4)*T*Math.pow(RH,2) - 1.99*Math.pow(10,-6)*Math.pow(T,2)*Math.pow(RH,2)
+                if(T >= 80 && T <= 112 && RH <= 0.13 ) {
+                    return shi - (3.25 - 0.25 * RH) * (Math.pow( (17 - Math.abs(T - 95)/17 ),0.5))
+                } else if( T >= 80 && T <= 87 && RH > 0.85 ){
+                    return shi + 0.02 * (RH - 85)*(87 - T)
+                }else {
+                    return shi
+                }
             }
-        };
+        }
+        
+        const url = 'https://api-redemet.decea.mil.br/aerodromos/info?api_key=WeFypQetsybfX16WGap07x7CELUOmcNYf4PvtEk5&localidade=SBRF';
 
-        const day = new Date()
-
-        fetch(url, options)
+        fetch(url)
             .then(res => res.json())
-            .then(res => {
-                const celsiusTemp = convertToCelsius(res.main.temp)
-                const weatherIconReference = res.weather[0].icon
-                const weatherIcon = `http://openweathermap.org/img/w/${weatherIconReference}.png`
-                const img = document.querySelector('.weather-icon')
-                img.src = weatherIcon
-                img.style.width = '50px'
-                img.style.height = '50px'
+            .then( ({ data }) => {
+                const temp =  data.temperatura
+                const currentTemp = document.querySelector("#ct")
+                currentTemp.innerHTML = temp
 
+                const iconTemp = document.querySelector(".temp-icon")
+                iconTemp.src = data.tempoImagem
+                
+                const obssky = document.querySelector(".obs-sky")
+                obssky.innerHTML = `Céu ${data.ceu}`
+
+                const T = celsiusToFahrenheit(temp)
+                const RH = getRH(data.ur)
+
+                const starHeatIndex =  calcStarHeatIndex(T, RH)
+                let HI = calcStarHeatIndex(starHeatIndex, T, RH)
+
+                const heat = fahrenheitToCelsius(HI)
+
+                const msg = document.querySelector(".msg")
+                const msgBox = document.querySelector(".msg-box-color")
+
+                if(heat <= 27) {
+                    msgBox.style.backgroundColor = ' #58e31c'
+                    msg.innerHTML = 'Seguro'
+                } else if(heat >= 27.1 && heat <= 32) {
+                    msgBox.style.backgroundColor = ' #fff466'
+                    msg.innerHTML = 'Cuidado'
+                    msg.style.color = '#000'
+                } else if(heat >= 32.1 && heat <= 41) {
+                    msgBox.style.backgroundColor = '#FF8D00'
+                    msg.innerHTML = 'Cuidado Extremo'
+                } else if(heat >= 41.1 && heat <= 54) {
+                    msgBox.style.backgroundColor = '#FF0000'
+                    msg.innerHTML = 'Perigo'
+                } else {
+                    msgBox.style.backgroundColor = '#8A2BE2'
+                    msg.innerHTML = 'Perigo Extremo'
+                }          
             })
         
     </script>
