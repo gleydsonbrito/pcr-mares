@@ -15,11 +15,13 @@
         .ct-card .ctraffic-card {
             display: flex;
             align-items: center;
+            justify-content: center;
             flex-direction: column;
             background-color: #173DB7;
             border-radius: 30px;
             box-shadow: 5px 5px 5px lightgray;
             overflow: hidden;
+            height: 200px;
         }
 
         .ct-card p {
@@ -164,11 +166,6 @@
                 countStreets+=1
                 speedkm+=attributes.SPEEDKMH
                 lengthCongestion+=attributes.LENGTH
-
-                console.log(attributes.STREET)
-                console.log(attributes.SPEEDKMH, 'k/h')
-                console.log(attributes.LENGTH/1000,'km')
-
             });
 
             //const ms = document.querySelector(".cmean-speed")
