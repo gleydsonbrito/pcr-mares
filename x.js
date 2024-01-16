@@ -21,3 +21,30 @@ fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/COP/BASES_TABEL
     console.log(closerHourIndex)
     console.log("*** ", new Date(events[closerHourIndex].attributes.DATAHORA))
 })
+
+["Av. Dr. José Rufino" ,
+"Av. Gen. San Martin" ,
+"R. Pe. Teófilo Tworz",
+"Av. Rui Barbosa ",
+"Av. Antônio de Góes - Pista Sul", 
+"Av. Norte Miguel Arraes de Alencar",
+"Av. Norte Miguel Arraes de Alencar", 
+"R. Dr. Severino Pinheiro",
+"Av. Caxangá",
+"Av. Eng. Abdias de Carvalho", 
+"Av. Mal. Mascarenhas de Morais", 
+"R. de Apipucos", 
+"R. Dois Irmãos", 
+"Av. Gov. Agamenon Magalhães - Pista Lateral", 
+"V. Mangue", 
+"Av. Recife", 
+"Est. do Bongi", 
+"Av. Gov. Agamenon Magalhães - Pista Central",
+"Av. Eng. Abdias de Carvalho",
+"Av. Norte Miguel Arraes de Alencar",
+"Av. Cons. Rosa e Silva",
+"R. Real da Torre",
+"Est. dos Remédios",
+"BR-101 Rod. Gov. Mário Covas",
+"Av. Cons. Rosa e Silva "]
+

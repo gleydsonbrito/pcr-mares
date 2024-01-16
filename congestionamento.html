@@ -94,7 +94,7 @@
 <body>
     <div class="ct-card">
         <div class="ctraffic-card">
-            <p style="margin-bottom: 40px;">CONDIÇÕES DE CONGESTIONAMENTO</p>
+            <p style="margin-bottom: 40px;">Condições de Congestionamento</p>
             <div class="ctraffic-container">
                 <div class="ctraffic">
                     <p class="cm-traffic"></p>
@@ -103,10 +103,6 @@
                 </div>
             </div>
             <div class="cinfo-container">
-                <div class="ct-info-container">
-                    <h4 style="font-weight: normal; margin: 20px 10px;" class="cmean-speed"></h4>
-                    <img src="vlg.gif" alt="" class="ct-icons">
-                </div>
                 <div class="ct-info-container">
                     <h4 style="font-weight: normal; margin: 20px 10px;" class="cmean-congestion"></h4>
                     <img src="traffic-jam.png" alt="" class="ct-icons">
@@ -123,7 +119,31 @@
             5: "Vias interditadas"
         }
 
-        fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/Geoevent/BASES_FEEDS_WAZE_1HORA/FeatureServer/1/query?where=CITY+%3D+%27Recife%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&gdbVersion=&historicMoment=&returnDistinctValues=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&multipatchOption=xyFootprint&resultOffset=&resultRecordCount=&returnTrueCurves=false&returnExceededLimitFeatures=false&quantizationParameters=&returnCentroid=false&timeReferenceUnknownClient=false&sqlFormat=none&resultType=&featureEncoding=esriDefault&datumTransformation=&f=pjson")
+        const mainCities = ["Av. Dr. José Rufino" ,
+                            "Av. Gen. San Martin" ,
+                            "R. Pe. Teófilo Tworz",
+                            "Av. Rui Barbosa ",
+                            "Av. Antônio de Góes - Pista Sul", 
+                            "Av. Norte Miguel Arraes de Alencar",
+                            "R. Dr. Severino Pinheiro",
+                            "Av. Caxangá",
+                            "Av. Eng. Abdias de Carvalho", 
+                            "Av. Mal. Mascarenhas de Morais", 
+                            "R. de Apipucos", 
+                            "R. Dois Irmãos", 
+                            "Av. Gov. Agamenon Magalhães - Pista Lateral", 
+                            "V. Mangue", 
+                            "Av. Recife", 
+                            "Est. do Bongi", 
+                            "Av. Gov. Agamenon Magalhães - Pista Central",
+                            "Av. Eng. Abdias de Carvalho",
+                            "Av. Norte Miguel Arraes de Alencar",
+                            "Av. Cons. Rosa e Silva",
+                            "R. Real da Torre",
+                            "Est. dos Remédios",
+                            "BR-101 Rod. Gov. Mário Covas"]
+
+        fetch("https://esigportal2.recife.pe.gov.br/arcgis/rest/services/Geoevent/BASES_FEEDS_WAZE_5MINUTOS/MapServer/1/query?where=1%3D1&text=&objectIds=&time=&timeRelation=esriTimeRelationOverlaps&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&sqlFormat=none&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson")
         .then(res => res.json())
         .then( ({ features }) => features)
         .then( trafficDatas => {
@@ -133,28 +153,29 @@
             let trafficLevel = 0
             let bannedStreet = []
             
-            trafficDatas.forEach( ({ attributes, geometry }) => {
-                if(new Date(attributes.PUBMILLIS).getHours() === new Date().getHours()){
-                    const trafficMin = new Date(attributes.PUBMILLIS).getHours()
-                    const minNow = new Date().getHours()
-                    if(trafficMin >= minNow - 5 && trafficMin <= minNow){
-                        countStreets+=1
-                        speedkm+=attributes.SPEEDKMH
-                        lengthCongestion+=attributes.LENGTH
-                        trafficLevel+=attributes.LEVEL
+            const recifeTrafficData = trafficDatas.filter( tf  => {
+                return tf.attributes.CITY === 'Recife' && 
+                tf.attributes.LEVEL !== 1 && 
+                tf.attributes.LEVEL !== 5 &&
+                new Date(tf.attributes.LAST_EDITED_DATE).getDate() === new Date().getDate()
+            })
+            
+            recifeTrafficData.forEach( ({ attributes, geometry }) => {
+                countStreets+=1
+                speedkm+=attributes.SPEEDKMH
+                lengthCongestion+=attributes.LENGTH
 
-                        if(attributes.LEVEL === 5) {
-                            bannedStreet.push({name: attributes.STREET, coords: geometry.paths[0]})
-                        }
-                    }
-                }
+                console.log(attributes.STREET)
+                console.log(attributes.SPEEDKMH, 'k/h')
+                console.log(attributes.LENGTH/1000,'km')
+
             });
 
-            const ms = document.querySelector(".cmean-speed")
-            ms.innerHTML = `Velocidade média na cidade agora: ${(speedkm/countStreets).toFixed(2)} km/h`
+            //const ms = document.querySelector(".cmean-speed")
+            //ms.innerHTML = `Velocidade média na cidade agora: ${(speedkm/countStreets).toFixed(2)} km/h`
 
             const mc = document.querySelector(".cmean-congestion")
-            mc.innerHTML = `Tamanho médio dos congestionamentos: ${((lengthCongestion/countStreets)/1000).toFixed(2)} km`
+            mc.innerHTML = `Tamanho do congestionamentos: ${(lengthCongestion/1000).toFixed(1)} km`
         })
     </script>
     <a href="index.html" style="color: blue; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Voltar para página inicial</a>
